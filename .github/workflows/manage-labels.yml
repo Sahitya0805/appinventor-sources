@@ -1,0 +1,29 @@
+name: "Label Helper"
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+jobs:
+  helper:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Setup New PR
+        if: github.event.action == 'opened'
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-label "pull request: needs review"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+      - name: Reset After Push
+        if: github.event.action == 'synchronize'
+        run: |
+          labels=$(gh pr view ${{ github.event.pull_request.number }} --json labels --template '{{range .labels}}{{.name}},{{end}}')
+          if [[ "$labels" == *"pull request: needs reply to review"* ]]; then
+            gh pr edit ${{ github.event.pull_request.number }} --remove-label "pull request: needs reply to review" --add-label "pull request: needs review"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
