@@ -54,6 +54,10 @@ import DGCharts
   var _dataComponents: Array<ChartComponent> = []
   var _valueType: Int = 0
   
+  var _descriptionFontSize: Float = 14.0
+  var _xAxisFontSize: Float = 14.0
+  var _yAxisFontSize: Float = 14.0
+  
   var _axesTextColor: UIColor
   private var darkMode = false
 
@@ -133,6 +137,40 @@ import DGCharts
     set {
       _backgroundColor = argbToColor(newValue)
       _chartView?.backgroundColor = _backgroundColor
+    }
+  }
+
+  @objc open var DescriptionFontSize: Float {
+    get {
+      return _descriptionFontSize
+    }
+    set {
+      _descriptionFontSize = newValue
+      _chartView?.setDescriptionTextSize(CGFloat(newValue))
+    }
+  }
+
+  @objc open var XAxisFontSize: Float {
+    get {
+      return _xAxisFontSize
+    }
+    set {
+      _xAxisFontSize = newValue
+      if let axisChartView = _chartView as? AxisChartView {
+        axisChartView.setXAxisTextSize(CGFloat(newValue))
+      }
+    }
+  }
+
+  @objc open var YAxisFontSize: Float {
+    get {
+      return _yAxisFontSize
+    }
+    set {
+      _yAxisFontSize = newValue
+      if let axisChartView = _chartView as? AxisChartView {
+        axisChartView.setYAxisTextSize(CGFloat(newValue))
+      }
     }
   }
   
@@ -369,6 +407,9 @@ import DGCharts
     ValueFormat = _valueType
     
     AxesTextColor = colorToArgb(_axesTextColor)
+    DescriptionFontSize = _descriptionFontSize
+    XAxisFontSize = _xAxisFontSize
+    YAxisFontSize = _yAxisFontSize
   }
 
   func addDataComponent(_ dataComponent: ChartComponent) {
